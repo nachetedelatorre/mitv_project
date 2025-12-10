@@ -1,6 +1,5 @@
 /*
   MiTV Pro - Backend (Postgres opcional, SQLite por defecto)
-  Soporta: POSTGRES via DATABASE_URL o SQLite local (data.db)
 */
 const express = require('express');
 const jwt = require('jsonwebtoken');
@@ -10,7 +9,7 @@ const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 
-const PG = require('pg');        // npm i pg
+const PG = require('pg');        // pg client
 const sqlite3 = require('sqlite3').verbose();
 const { open } = require('sqlite');
 
