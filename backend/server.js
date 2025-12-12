@@ -1,5 +1,6 @@
 /*
-  MiTV Pro - Backend (Postgres opcional, SQLite por defecto)
+  MiTV Pro - Backend seguro: usa Postgres si DATABASE_URL está definida.
+  No hace require('sqlite3') hasta que sea necesario (evita errores de binario en hosting).
 */
 const express = require('express');
 const jwt = require('jsonwebtoken');
@@ -9,9 +10,7 @@ const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 
-const PG = require('pg');        // pg client
-const sqlite3 = require('sqlite3').verbose();
-const { open } = require('sqlite');
+const PG = require('pg'); // pg client (no problema en Railway)
 
 const app = express();
 app.use(express.json());
@@ -31,7 +30,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// DB helper: if DATABASE_URL present, use Postgres, else SQLite
+// DB helper: use Postgres when DATABASE_URL present; otherwise lazy-load sqlite
 let db;
 let isPostgres = !!process.env.DATABASE_URL;
 
@@ -64,6 +63,9 @@ async function initDB() {
       expires_at TIMESTAMP
     );`);
   } else {
+    // lazy-require sqlite3 and sqlite to avoid loading native binding in incompatible envs
+    const sqlite3 = require('sqlite3').verbose();
+    const { open } = require('sqlite');
     db = await open({ filename: path.join(__dirname,'data.db'), driver: sqlite3.Database });
     await db.exec(`CREATE TABLE IF NOT EXISTS resellers (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -110,7 +112,7 @@ function auth(req,res,next){
   }
 }
 
-// Endpoints
+// Endpoints (idénticos a los que ya tienes)
 app.post('/api/auth/login', async (req,res) => {
   const { username, password } = req.body;
   if(!username || !password) return res.status(400).json({error:'Missing'});
