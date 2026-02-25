@@ -13,6 +13,10 @@ const cors = require('cors');
 const PG = require('pg'); // pg client (no problema en Railway)
 
 const app = express();
+
+app.get("/", (req, res) => {
+  res.send("Servidor funcionando correctamente");
+});
 app.use(express.json());
 app.use(cors());
 
