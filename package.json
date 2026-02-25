@@ -1,9 +1,18 @@
 {
-  "name": "mitv_project_root",
+  "name": "mitv_project",
   "version": "1.0.0",
+  "main": "server.js",
   "scripts": {
-    "postinstall": "cd panel && npm ci --legacy-peer-deps && npm run build --if-present && cd .. && cd backend && npm ci --legacy-peer-deps",
-    "start": "cd backend && node server.js",
-    "build": "cd panel && npm ci --legacy-peer-deps && npm run build --if-present"
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.16.3",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.6"
   }
 }
