@@ -16,7 +16,6 @@ app.post("/playlists", async (req, res) => {
   try {
     const { name, m3u_url } = req.body;
 
-    const result = await pool.query(
       "INSERT INTO playlists (name, m3u_url) VALUES ($1, $2) RETURNING *",
       [name, m3u_url]
     );
