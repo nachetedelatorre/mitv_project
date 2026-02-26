@@ -9,13 +9,26 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-app.get("/", (req, res) => {
-  res.json({ message: "MiTV Pro backend funcionando 🚀" });
+// ROOT
+app.get("/", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT NOW()");
+    res.json({
+      message: "MiTV Pro backend funcionando 🚀",
+      time: result.rows[0].now,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error conectando a la base de datos");
+  }
 });
+
+// CREAR PLAYLIST
 app.post("/playlists", async (req, res) => {
   try {
     const { name, m3u_url } = req.body;
 
+    const result = await pool.query(
       "INSERT INTO playlists (name, m3u_url) VALUES ($1, $2) RETURNING *",
       [name, m3u_url]
     );
@@ -26,24 +39,17 @@ app.post("/playlists", async (req, res) => {
     res.status(500).json({ error: "Error creando playlist" });
   }
 });
+
+// OBTENER PLAYLISTS
 app.get("/playlists", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM playlists ORDER BY id DESC");
+    const result = await pool.query(
+      "SELECT * FROM playlists ORDER BY id DESC"
+    );
     res.json(result.rows);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error obteniendo playlists" });
-  }
-});
-  try {
-    const result = await pool.query("SELECT NOW()");
-    res.json({
-      message: "MiTV Pro backend funcionando 🚀",
-      time: result.rows[0].now,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error conectando a la base de datos");
   }
 });
 
