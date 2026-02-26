@@ -10,6 +10,30 @@ const pool = new Pool({
 });
 
 app.get("/", async (req, res) => {
+app.post("/playlists", async (req, res) => {
+  try {
+    const { name, m3u_url } = req.body;
+
+    const result = await pool.query(
+      "INSERT INTO playlists (name, m3u_url) VALUES ($1, $2) RETURNING *",
+      [name, m3u_url]
+    );
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error creando playlist" });
+  }
+});
+app.get("/playlists", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM playlists ORDER BY id DESC");
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error obteniendo playlists" });
+  }
+});
   try {
     const result = await pool.query("SELECT NOW()");
     res.json({
