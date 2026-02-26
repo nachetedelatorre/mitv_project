@@ -9,7 +9,9 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-app.get("/", async (req, res) => {
+app.get("/", (req, res) => {
+  res.json({ message: "MiTV Pro backend funcionando 🚀" });
+});
 app.post("/playlists", async (req, res) => {
   try {
     const { name, m3u_url } = req.body;
